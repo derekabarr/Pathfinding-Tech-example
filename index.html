@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phaser 4 + GLSL GPU Pathfinding</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; background: #0b101b; color: #e1e8f1; font: 14px system-ui, sans-serif; }
+    #wrap { margin: 0 auto; max-width: 1024px; }
+    header { padding: 11px 16px; display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; }
+    #stats { color: #8fdbe9; }
+    #game-container canvas { display: block; width: 100%; height: auto; image-rendering: pixelated; cursor: crosshair; }
+    footer { padding: 9px 16px; color: #99a9b8; }
+  </style>
+</head>
+<body>
+  <div id="wrap">
+    <header><strong>GLSL wavefront pathfinding</strong><span id="stats">Initializing WebGL2…</span></header>
+    <div id="game-container"></div>
+    <footer><span id="message">Click open space to change the goal. [ / ] adjust GPU passes per frame.</span></footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@4.2.1/dist/phaser.js"></script>
+  <script type="module">
+    import { GameScene } from './src/GameScene.js';
+
+    // Explicitly select WebGL2 for GLSL 300 es, texelFetch and GPU points.
+    // Phaser 4 supports a supplied WebGL2 context.
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 1024;
+    const context = canvas.getContext('webgl2', {
+      alpha: false, antialias: false, depth: true, stencil: true,
+      preserveDrawingBuffer: false
+    });
+    if (!context) {
+      document.getElementById('message').textContent =
+        'WebGL2 is required. Enable hardware acceleration or use a WebGL2-capable browser.';
+    } else {
+      new Phaser.Game({
+        type: Phaser.WEBGL,
+        canvas,
+        context,
+        width: 1024,
+        height: 1024,
+        parent: 'game-container',
+        backgroundColor: '#0b101b',
+        scene: [GameScene]
+      });
+    }
+  </script>
+</body>
+</html>
